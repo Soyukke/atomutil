@@ -30,7 +30,8 @@ class structure:
         xcart = deepcopy(self.xcart)
         xred = deepcopy(self.xred)
         rprim = deepcopy(self.rprim)
-        return structure(natom=natom, ntypat=ntypat, typat=typat, znucl=znucl, xcart=xcart, xred=xred, rprim=rprim)
+        selective = deepcopy(self.selective)
+        return structure(natom=natom, ntypat=ntypat, typat=typat, znucl=znucl, xcart=xcart, xred=xred, rprim=rprim, selective=selective)
 
 
     def remove(self, index):
@@ -130,6 +131,18 @@ class structure:
         selective[np.array(self.selective) == 'T'] = True
         selective[np.array(self.selective) == 'F'] = False
         return selective
+
+    def near_atomic_index(self, index, radius):
+        """
+        INPUT : index: center atom, radius: search space
+        OUTPUT: vindex
+        """
+        vindex = np.array(list(range(self.natom)))
+        norms = norm(self.xcart[index] - self.xcart, axis=1)
+        # 自分のindexを取り除く
+        vindex_near_bool = np.logical_and(0<norms, norms <= radius)
+        vindex_near = vindex[vindex_near_bool]
+        return vindex_near
 
 def poscar2structure_selective(filename="POSCAR"):
     """
