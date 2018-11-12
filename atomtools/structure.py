@@ -47,6 +47,7 @@ class structure:
         xcart = np.delete(self.xcart, index, axis=0)
         xred = np.delete(self.xred, index, axis=0)
         rprim = deepcopy(self.rprim)
+        selective = np.delete(self.selective, index, axis=0)
         # 削除する原子と同じ種類の原子が他にないときはntypat と　znuclから消す
         if not (removed_typat in typat):
             znucl = np.delete(znucl, removed_typat-1)
@@ -56,7 +57,7 @@ class structure:
             for i in range(len(unique_typat)):
                 typat[typat==unique_typat[i]] = i + 1
 
-        return structure(natom=natom, ntypat=ntypat, typat=typat, znucl=znucl, xcart=xcart, xred=xred, rprim=rprim)
+        return structure(natom=natom, ntypat=ntypat, typat=typat, znucl=znucl, xcart=xcart, xred=xred, rprim=rprim, selective=selective)
 
     def rotate(self, vn, radian):
         """
@@ -344,7 +345,7 @@ def mol2structure(filename="test.mol", cell=None, margin=None, mode="POSITION"):
 
 
 
-def generate_poscar(structure_, filename, isSelective=False, coordinate="Cartesian", vselective_flag=[]):
+def generate_poscar(structure_, filename, isSelective=False, coordinate="Cartesian"):
     """
     INPUT: atomic infomation, filename natom, znucl, ntypat, typat, xcart, rprim, fn\n
     OUTPUT: none\n
@@ -373,7 +374,7 @@ def generate_poscar(structure_, filename, isSelective=False, coordinate="Cartesi
     for i in range(structure_.natom):
         poscar += "{0: .16E}    {1: .16E}    {2: .16E}".format(*temp_x[vidx][i])
         if isSelective:
-            poscar += " {0} {1} {2}".format(*vselective_flag[i])
+            poscar += " {0} {1} {2}".format(*structure_.selective[i])
         poscar += "\n"
     generate_file(filename, poscar)
 
