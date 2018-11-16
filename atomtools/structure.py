@@ -47,7 +47,10 @@ class structure:
         xcart = np.delete(self.xcart, index, axis=0)
         xred = np.delete(self.xred, index, axis=0)
         rprim = deepcopy(self.rprim)
-        selective = np.delete(self.selective, index, axis=0)
+        # If selective is not None, delete target index of selective 
+        selective = []
+        if self.natom == len(self.selective):
+            selective = np.delete(self.selective, index, axis=0)
         # 削除する原子と同じ種類の原子が他にないときはntypat と　znuclから消す
         if not (removed_typat in typat):
             znucl = np.delete(znucl, removed_typat-1)
@@ -549,7 +552,6 @@ def add(structure1, structure2):
     INPUT : structure1: structure, structure2: structure
     OUTPUT: structure1 + structure2
     """
-    assert structure1.volume() > structure2.volume(), "structure1.volume() must be larger than structure2.volume()"
 
     natom = structure1.natom + structure2.natom
     # typatから原子番号の列に変換して結合
